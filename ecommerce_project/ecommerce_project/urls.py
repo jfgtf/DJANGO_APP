@@ -28,20 +28,11 @@ router.register(
     "products", ecommerce_views.ProductViewset, basename="products"
 )
 
+router.register("orders", ecommerce_views.OrderViewset, basename="orders")
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("orders/", ecommerce_views.OrderList.as_view(), name="order-list"),
-    path(
-        "orders/<int:pk>/",
-        ecommerce_views.OrderDetail.as_view(),
-        name="order-detail",
-    ),
-    path(
-        "place-order/",
-        ecommerce_views.OrderPlacement.as_view(),
-        name="order-placement",
-    ),
     path(
         "top-ordered-products/",
         ecommerce_views.TopOrderedProducts.as_view(),

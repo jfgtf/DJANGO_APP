@@ -5,6 +5,9 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -15,6 +18,9 @@ class Product(models.Model):
     thumbnail = models.ImageField(
         upload_to="assets/thumbnails/", blank=True, null=True
     )
+
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):
@@ -28,11 +34,17 @@ class Order(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     payment_due_date = models.DateTimeField()
 
+    def __str__(self):
+        return f"{self.user.user.username} {self.order_date}"
+
 
 class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.order.user.user.username} {self.order.order_date}"
 
 
 class UserProfile(models.Model):
@@ -46,3 +58,6 @@ class UserProfile(models.Model):
     role = models.CharField(
         max_length=30, choices=RoleChoice.choices, default=RoleChoice.CLIENT
     )
+
+    def __str__(self):
+        return f"{self.user.username} ({self.role})"
