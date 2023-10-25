@@ -1,34 +1,39 @@
 from rest_framework import serializers
-from .models import Product, Order, Category, OrderProduct, UserProfile
+
+from .models import Category, Order, OrderProduct, Product, UserProfile
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), write_only=True
+    )
 
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = "__all__"
 
 
 class OrderProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderProduct
-        fields = '__all__'
+        fields = "__all__"
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    customer = serializers.StringRelatedField()
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=UserProfile.objects.all(), write_only=True
+    )
     products = OrderProductSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = "__all__"
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -36,4 +41,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = "__all__"

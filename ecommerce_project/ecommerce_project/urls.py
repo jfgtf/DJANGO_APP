@@ -18,9 +18,34 @@ from django.urls import path
 from ecommerce_app import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('products/', views.ProductList.as_view(), name='product-list'),
-    path('products/<int:pk>/', views.ProductDetail.as_view(), name='product-detail'),
-    path('orders/', views.OrderList.as_view(), name='order-list'),
-    path('orders/<int:pk>/', views.OrderDetail.as_view(), name='order-detail'),
+    path("admin/", admin.site.urls),
+    path(
+        "products/create/",
+        views.ProductCreate.as_view(),
+        name="product-create",
+    ),
+    path("products/", views.ProductList.as_view(), name="product-list"),
+    path(
+        "products/<int:pk>/",
+        views.ProductDetail.as_view(),
+        name="product-detail",
+    ),
+    path("orders/", views.OrderList.as_view(), name="order-list"),
+    path("orders/<int:pk>/", views.OrderDetail.as_view(), name="order-detail"),
+    path(
+        "place-order/", views.OrderPlacement.as_view(), name="order-placement"
+    ),
+    path(
+        "top-ordered-products/",
+        views.TopOrderedProducts.as_view(),
+        name="top-ordered-products",
+    ),
+    path("categories/", views.CategoryList.as_view(), name="category-list"),
+    path(
+        "categories/create/",
+        views.CategoryCreate.as_view(),
+        name="category-create",
+    ),
+    path("users/create/", views.UserCreate.as_view(), name="user-create"),
+    path("users/", views.UserList.as_view(), name="user-list"),
 ]
