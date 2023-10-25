@@ -15,37 +15,37 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from ecommerce_app import views
+from ecommerce_app import views as ecommerce_views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+
+router.register(
+    "categories", ecommerce_views.CategoryViewset, basename="categories"
+)
+
+router.register(
+    "products", ecommerce_views.ProductViewset, basename="products"
+)
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("orders/", ecommerce_views.OrderList.as_view(), name="order-list"),
     path(
-        "products/create/",
-        views.ProductCreate.as_view(),
-        name="product-create",
+        "orders/<int:pk>/",
+        ecommerce_views.OrderDetail.as_view(),
+        name="order-detail",
     ),
-    path("products/", views.ProductList.as_view(), name="product-list"),
     path(
-        "products/<int:pk>/",
-        views.ProductDetail.as_view(),
-        name="product-detail",
-    ),
-    path("orders/", views.OrderList.as_view(), name="order-list"),
-    path("orders/<int:pk>/", views.OrderDetail.as_view(), name="order-detail"),
-    path(
-        "place-order/", views.OrderPlacement.as_view(), name="order-placement"
+        "place-order/",
+        ecommerce_views.OrderPlacement.as_view(),
+        name="order-placement",
     ),
     path(
         "top-ordered-products/",
-        views.TopOrderedProducts.as_view(),
+        ecommerce_views.TopOrderedProducts.as_view(),
         name="top-ordered-products",
     ),
-    path("categories/", views.CategoryList.as_view(), name="category-list"),
-    path(
-        "categories/create/",
-        views.CategoryCreate.as_view(),
-        name="category-create",
-    ),
-    path("users/create/", views.UserCreate.as_view(), name="user-create"),
-    path("users/", views.UserList.as_view(), name="user-list"),
-]
+    path("users/", ecommerce_views.UserList.as_view(), name="user-list"),
+] + router.urls

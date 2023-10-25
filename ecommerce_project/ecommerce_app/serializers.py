@@ -29,7 +29,9 @@ class OrderSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         queryset=UserProfile.objects.all(), write_only=True
     )
-    products = OrderProductSerializer(many=True, read_only=True)
+    products = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=True, write_only=True
+    )
 
     class Meta:
         model = Order
@@ -37,8 +39,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
-
     class Meta:
         model = UserProfile
         fields = "__all__"
