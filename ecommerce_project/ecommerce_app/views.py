@@ -1,8 +1,10 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Sum
 from django.utils import timezone
+from ecommerce_app.mail_auto_send import send_schedule_email
 from ecommerce_app.models import (
     Category,
     Order,
@@ -70,30 +72,26 @@ class OrderViewset(
     def create(self, request):
         data = request.POST.copy()
 
-        # customer_name = data.get("customer_name")
-        # shipping_address = data.get("shipping_address")
-        # products = data.get("products")
-
-        payment_due_date = timezone.now() + timezone.timedelta(days=5)
+        payment_due_date = timezone.now() + timezone.timedelta(
+            days=settings.DAYS_UNTIL_PAYMENT
+        )
         data["payment_due_date"] = payment_due_date
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
-        subject = "Order Confirmation"
-        message = (
-            "Thank you for your order."
-            f" Your payment is due by {payment_due_date}."
-        )
-        from_email = "your@email.com"
-        recipient_list = ["test@test.com"]
+        order = serializer.instance
+        send_schedule_email(order.id)
+        user = order.user_details.user
 
         send_mail(
-            subject,
-            message,
-            from_email,
-            recipient_list,
+            "Order Confirmation",
+            (
+                "Thank you for your order."
+                f" Your payment is due by {payment_due_date}."
+            ),
+            settings.EMAIL,
+            [user.email],
             fail_silently=False,
         )
 
